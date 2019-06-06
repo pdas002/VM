@@ -7,14 +7,16 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "input.h";
+#include "input.h"
+
 #define true 1
 #define false 0
 
 
 int main(){
 	while(true){
-		//Get Input
+		struct INSTRUCTION* instr = getInput();
+		printf("%d %d %d %d %d", (*instr).Instr.RTYPE.OPCODE, (*instr).Instr.RTYPE.RS, (*instr).Instr.RTYPE.RT, (*instr).Instr.RTYPE.RD, (*instr).Instr.RTYPE.FUNCT );
 		//Check if its correct
 		//Create Instruc Array
 
