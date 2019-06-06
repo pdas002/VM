@@ -9,6 +9,7 @@
 #define INPUT_H_
 #define R 0
 #define I 1
+#define B 2
 
 struct RTYPE {
 	unsigned int OPCODE: 6;
@@ -37,6 +38,6 @@ struct INSTRUCTION{
 	int type;
 };
 
-struct INSTRUCTION* getInput();
+struct INSTRUCTION* handleInput();
 
 #endif /* INPUT_H_ */
