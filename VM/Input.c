@@ -15,33 +15,20 @@
 
 
 
-typedef enum{
-	RTYPE = 0x00,
-	ADDI = 0x08,
-	ANDI = 0x0C,
-	LW = 0x23,
-	SW = 0x2B,
-	BEQ = 0x04,
-} OPCODE;
-
-typedef enum{
-	ADD = 0x20,
-	DIV = 0x1A,
-	MULT = 0x18,
-	XOR = 0x26,
-	OR = 0x25,
-	AND = 0x24,
-	SLL = 0x00,
-	SRL = 0x02
-} FUNCTION;
 
 char* getInput(){
 	char* Name = malloc(sizeof(char));
+	if(Name == NULL){
+		return NULL;
+	}
 	char* tmpName;
 	char c;
 	printf("Enter Instruction Mnemonic (Ex: ADD $1,$2,$3): ");
 		for(int i = 0; i< MAX_MNEMONIC; i++){
 			c = getchar();
+			if(c == '\n'){
+				return "Done";
+			}
 			if(c == ' '){
 				break;
 			} else{
@@ -66,13 +53,28 @@ char* getInput(){
 struct INSTRUCTION* handleInput(){
 	char operation[MAX_OPCHAR];
 	struct INSTRUCTION* Instruct = malloc(sizeof(struct INSTRUCTION));
+	if(Instruct == NULL){
+			fprintf(stderr, "CAN'T ALLOC MEM\n");
+			exit(0);
+	}
 	unsigned int rs, rt, rd, imm;
 
 	char* Name = getInput();
-	if((strcmp(Name, "ADDI") == 0)){
+	if((strcmp(Name, "Done") == 0)){
+		int c;
+		while ((c = getchar()) != '\n' && c != EOF);
+		Instruct->type = D; //Done with instrs type
+		free(Name);
+		return Instruct;
+	}else if(Name == NULL){
+		fprintf(stderr, "CAN'T ALLOC MEM\n");
+		exit(0);
+	}
+	else if((strcmp(Name, "ADDI") == 0)){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
-			printf("Invalid input\n");
+			printf("Wrong Format...");
+			free(Name);
 			free(Instruct);
 			return NULL;
 		};
@@ -84,7 +86,8 @@ struct INSTRUCTION* handleInput(){
 	} else if((strcmp(Name, "ANDI") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
-			printf("Invalid input\n");
+			printf("Wrong Format...");
+			free(Name);
 			free(Instruct);
 			return NULL;
 		};
@@ -96,7 +99,8 @@ struct INSTRUCTION* handleInput(){
 	}else if((strcmp(Name, "SW") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d, %d($%d)", &rt, &imm, &rs) != 3){
-			printf("Invalid input\n");
+			printf("Wrong Format...");
+			free(Name);
 			free(Instruct);
 			return NULL;
 		};
@@ -108,7 +112,8 @@ struct INSTRUCTION* handleInput(){
 	}else if((strcmp(Name, "LW") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation,"$%d, %d($%d)", &rt, &imm, &rs) != 3){
-			printf("Invalid input\n");
+			printf("Wrong Format...");
+			free(Name);
 			free(Instruct);
 			return NULL;
 		};
@@ -120,7 +125,8 @@ struct INSTRUCTION* handleInput(){
 	}else if((strcmp(Name, "BEQ") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d,$%d,%d", &rs, &rt, &imm) != 3){
-			printf("Invalid input\n");
+			printf("Wrong Format...");
+			free(Name);
 			free(Instruct);
 			return NULL;
 		};
@@ -133,7 +139,8 @@ struct INSTRUCTION* handleInput(){
 			(strcmp(Name, "XOR") == 0) || (strcmp(Name, "OR") == 0) || (strcmp(Name, "AND") == 0)){
 				fgets(operation, MAX_OPCHAR, stdin);
 				if(sscanf(operation, "$%d,$%d,$%d\n", &rd, &rs, &rt) != 3){
-					printf("Invalid input\n");
+					printf("Wrong Format...");
+					free(Name);
 					free(Instruct);
 					return NULL;
 				};
@@ -163,7 +170,10 @@ struct INSTRUCTION* handleInput(){
 
 				}
 	} else{
-		printf("Instruction Not Currently Supported. Enter another");
+		printf("Instruction Not Currently Supported. Enter another!\n");
+		free(Name);
+		free(Instruct);
+		return NULL;
 	}
 	free(Name);
 	return Instruct;
