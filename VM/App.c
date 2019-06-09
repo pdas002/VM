@@ -9,12 +9,16 @@
 #include <stdio.h>
 #include "input.h"
 #include "registers.h"
+#include "memory.h"
+#include "execute.h"
 
 #define true 1
 #define false 0
 
 
 int main(){
+	printf("Welcome to a MIPS inspired VM!\n");
+	printf("Constraints: For SW, LW => (val(rs) + imm) < 100 and For BEQ, address is which instr to go to starting from  0\n");
 	struct INSTRUCTION** instrsFront = malloc(sizeof(struct INSTRUCTION*));
 	if(instrsFront == NULL){
 			fprintf(stderr, "CAN'T ALLOC MEM\n");
@@ -70,41 +74,71 @@ int main(){
 	}
 
     unsigned int* registers = createRegisters();
-    instrsTemp = instrsFront;
-    while(instrsTemp <= instrsBack){
-    	if((*instrsTemp)->type == R){
-    		switch((*instrsTemp)->Instr.RTYPE.FUNCT){
+    unsigned int* memory = createMem();
+
+    struct INSTRUCTION** PC = instrsFront;
+    while(PC <= instrsBack){
+    	if((*PC)->type == R){
+    		switch((*PC)->Instr.RTYPE.FUNCT){
     			case ADD:
-    				//execute(op1, op2, operation);
+    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], ADD);
+    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case DIV:
+    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], DIV);
+    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case MULT:
+    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], MULT);
+    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case XOR:
+    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], XOR);
+    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case OR:
+    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], OR);
+    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case AND:
-    				break;
-    			case SLL:
-    				break;
-    			case SRL:
+    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], AND);
+    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			default:
     				break;
     		}
+    		PC++;
     	}else{
-    		switch((*instrsTemp)->Instr.ITYPE.OPCODE){
+    		switch((*PC)->Instr.ITYPE.OPCODE){
     			case ADDI:
+    				registers[(*PC)->Instr.ITYPE.RT] = execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD);
+    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
+    				PC++;
     				break;
     			case ANDI:
+    				registers[(*PC)->Instr.ITYPE.RT] = execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, AND);
+    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
+    				PC++;
     				break;
     			case LW:
+    				registers[(*PC)->Instr.ITYPE.RT] = load(memory, execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD));
+    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
+    				PC++;
     				break;
     			case SW:
+    				store(memory, execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD), registers[(*PC)->Instr.ITYPE.RT] );
+    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
+    				PC++;
     				break;
     			case BEQ:
+    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
+    				if(execute(registers[(*PC)->Instr.ITYPE.RS], ~(registers[(*PC)->Instr.ITYPE.RS]) +1 , ADD ) == 0){
+    					PC = instrsFront + (*PC)->Instr.ITYPE.IMM;
+    					printf("%p\n", PC);
+    				}else{
+    					printf("f%p\n", PC);
+    					PC++;
+    				}
     				break;
     			default:
     				break;
@@ -112,24 +146,10 @@ int main(){
     	}
     }
 
-//	printf("%p\n", instrsFront);
-//	for(struct INSTRUCTION** p = instrsFront; p <instrsBack; p++ ){
-//		if((*p)->type == R){
-//			printf("%p\n", p);
-//			printf("%d %d %d %d %d\n", (*p)->Instr.RTYPE.OPCODE, (*p)->Instr.RTYPE.RS, (*p)->Instr.RTYPE.RT, (*p)->Instr.RTYPE.RD, (*p)->Instr.RTYPE.FUNCT );
-//		}else{
-//			printf("%d %d %d %d\n", (*p)->Instr.ITYPE.OPCODE, (*p)->Instr.ITYPE.RS, (*p)->Instr.ITYPE.RT, (*p)->Instr.ITYPE.IMM);
-//		}
-//		free((*p));
-//	}
-//	printf("%p\n", instrsBack);
 
-	// Store in Mem
-	//Decode (Registers)
-	//Execute/AccessMem
-	//WriteBack
 	free(instrsFront);
 	free(registers);
+	free(memory);
 	return 0;
 }
 

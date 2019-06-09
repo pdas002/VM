@@ -26,9 +26,7 @@ typedef enum{
 	MULT = 0x18,
 	XOR = 0x26,
 	OR = 0x25,
-	AND = 0x24,
-	SLL = 0x00,
-	SRL = 0x02
+	AND = 0x24
 } FUNCTION;
 
 struct RTYPE {

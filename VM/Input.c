@@ -23,11 +23,23 @@ char* getInput(){
 	}
 	char* tmpName;
 	char c;
-	printf("Enter Instruction Mnemonic (Ex: ADD $1,$2,$3): ");
+	printf("Enter Instruction Mnemonic (Ex: ADD $1,$2,$3) and double enter when done: ");
 		for(int i = 0; i< MAX_MNEMONIC; i++){
 			c = getchar();
 			if(c == '\n'){
-				return "Done";
+				tmpName = realloc(Name, 5 * sizeof(char));
+				if (tmpName == NULL)
+				{
+				    printf("\nExiting!!");
+				    free(Name);
+				    exit(0);
+				}
+				else
+				{
+				    Name = tmpName;
+				}
+				strcpy(Name, "Done");
+				return Name;
 			}
 			if(c == ' '){
 				break;
