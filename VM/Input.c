@@ -10,7 +10,7 @@
 #include "input.h"
 
 
-#define MAX_MNEMONIC 5
+#define MAX_MNEMONIC 50
 #define MAX_OPCHAR 18
 
 
@@ -23,10 +23,10 @@ char* getInput(){
 	}
 	char* tmpName;
 	char c;
-	printf("Enter Instruction Mnemonic (Ex: ADD $1,$2,$3) and double enter when done: ");
+	printf("> ");
 		for(int i = 0; i< MAX_MNEMONIC; i++){
 			c = getchar();
-			if(c == '\n'){
+			if(c == '\n' && i == 0){
 				tmpName = realloc(Name, 5 * sizeof(char));
 				if (tmpName == NULL)
 				{
@@ -41,7 +41,7 @@ char* getInput(){
 				strcpy(Name, "Done");
 				return Name;
 			}
-			if(c == ' '){
+			if(c == ' ' || ( c == '\n' && i != 0)){ //User says they finished the first part or messed up by pressing enter before full instruction
 				break;
 			} else{
 				Name[i] = (char) c;
@@ -72,9 +72,8 @@ struct INSTRUCTION* handleInput(){
 	unsigned int rs, rt, rd, imm;
 
 	char* Name = getInput();
+
 	if((strcmp(Name, "Done") == 0)){
-		int c;
-		while ((c = getchar()) != '\n' && c != EOF);
 		Instruct->type = D; //Done with instrs type
 		free(Name);
 		return Instruct;
@@ -85,7 +84,7 @@ struct INSTRUCTION* handleInput(){
 	else if((strcmp(Name, "ADDI") == 0)){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
-			printf("Wrong Format...");
+			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
 			return NULL;
@@ -98,7 +97,7 @@ struct INSTRUCTION* handleInput(){
 	} else if((strcmp(Name, "ANDI") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
-			printf("Wrong Format...");
+			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
 			return NULL;
@@ -111,7 +110,7 @@ struct INSTRUCTION* handleInput(){
 	}else if((strcmp(Name, "SW") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d, %d($%d)", &rt, &imm, &rs) != 3){
-			printf("Wrong Format...");
+			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
 			return NULL;
@@ -124,7 +123,7 @@ struct INSTRUCTION* handleInput(){
 	}else if((strcmp(Name, "LW") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation,"$%d, %d($%d)", &rt, &imm, &rs) != 3){
-			printf("Wrong Format...");
+			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
 			return NULL;
@@ -137,7 +136,7 @@ struct INSTRUCTION* handleInput(){
 	}else if((strcmp(Name, "BEQ") == 0) ){
 		fgets(operation, MAX_OPCHAR, stdin);
 		if(sscanf(operation, "$%d,$%d,%d", &rs, &rt, &imm) != 3){
-			printf("Wrong Format...");
+			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
 			return NULL;
@@ -151,7 +150,7 @@ struct INSTRUCTION* handleInput(){
 			(strcmp(Name, "XOR") == 0) || (strcmp(Name, "OR") == 0) || (strcmp(Name, "AND") == 0)){
 				fgets(operation, MAX_OPCHAR, stdin);
 				if(sscanf(operation, "$%d,$%d,$%d\n", &rd, &rs, &rt) != 3){
-					printf("Wrong Format...");
+					printf("Wrong Format...\n");
 					free(Name);
 					free(Instruct);
 					return NULL;

@@ -11,14 +11,19 @@
 #include "registers.h"
 #include "memory.h"
 #include "execute.h"
-
+#include "GUI.h"
 #define true 1
 #define false 0
 
 
-int main(){
+int main(int    argc, char **argv){
+
+	startGUI(argc, argv);
+
 	printf("Welcome to a MIPS inspired VM!\n");
-	printf("Constraints: For SW, LW => (val(rs) + imm) < 100 and For BEQ, address is which instr to go to starting from  0\n");
+	printf("Constraints: For SW, LW => (val(rs) + imm) < 100 and For BEQ, address is which instr to go to starting from  0\n"
+			"Enter Instruction Mnemonic in specific format please (Ex: ADD $1,$2,$3 or\nADD\n$1,$2,$3).\n"
+			"Press enter without typing when done.\n");
 	struct INSTRUCTION** instrsFront = malloc(sizeof(struct INSTRUCTION*));
 	if(instrsFront == NULL){
 			fprintf(stderr, "CAN'T ALLOC MEM\n");
@@ -81,27 +86,27 @@ int main(){
     	if((*PC)->type == R){
     		switch((*PC)->Instr.RTYPE.FUNCT){
     			case ADD:
-    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], ADD);
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), ADD));
     				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case DIV:
-    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], DIV);
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), DIV));
     				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case MULT:
-    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], MULT);
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), MULT));
     				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case XOR:
-    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], XOR);
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), XOR));
     				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case OR:
-    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], OR);
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), OR));
     				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			case AND:
-    				registers[(*PC)->Instr.RTYPE.RD] = execute(registers[(*PC)->Instr.RTYPE.RS], registers[(*PC)->Instr.RTYPE.RT], AND);
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), AND));
     				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
     				break;
     			default:
@@ -111,28 +116,28 @@ int main(){
     	}else{
     		switch((*PC)->Instr.ITYPE.OPCODE){
     			case ADDI:
-    				registers[(*PC)->Instr.ITYPE.RT] = execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD);
+    				editReg(registers, (*PC)->Instr.ITYPE.RT, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD));
     				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
     				PC++;
     				break;
     			case ANDI:
-    				registers[(*PC)->Instr.ITYPE.RT] = execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, AND);
+    				editReg(registers, (*PC)->Instr.ITYPE.RT, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD));
     				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
     				PC++;
     				break;
     			case LW:
-    				registers[(*PC)->Instr.ITYPE.RT] = load(memory, execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD));
+    				editReg(registers, (*PC)->Instr.ITYPE.RT, load(memory, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD)));
     				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
     				PC++;
     				break;
     			case SW:
-    				store(memory, execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD), registers[(*PC)->Instr.ITYPE.RT] );
+    				store(memory, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD), readReg(registers,(*PC)->Instr.ITYPE.RT) );
     				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
     				PC++;
     				break;
     			case BEQ:
     				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
-    				if(execute(registers[(*PC)->Instr.ITYPE.RS], ~(registers[(*PC)->Instr.ITYPE.RS]) +1 , ADD ) == 0){
+    				if(execute(readReg(registers,(*PC)->Instr.ITYPE.RS), ~(readReg(registers,(*PC)->Instr.ITYPE.RT)) +1 , ADD ) == 0){
     					PC = instrsFront + (*PC)->Instr.ITYPE.IMM;
     					printf("%p\n", PC);
     				}else{
