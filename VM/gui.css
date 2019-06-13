@@ -1,0 +1,23 @@
+GtkWindow {
+    font: Comic Sans 20
+}
+
+.button {
+  color: green;
+}
+
+#input {
+   background-color: blue;
+}
+
+#grid {
+   background-color: black;
+	margin-bottom: 300px;
+}
+#reg {
+   background-color: red;
+}
+
+#menu {
+   background-color: green;
+}

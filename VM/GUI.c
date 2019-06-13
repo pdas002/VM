@@ -10,30 +10,38 @@
 
 
 
-static void
-activate (GtkApplication* app,
-          gpointer        user_data)
-{
-  GtkWidget *window;
-
-  window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "Window");
-  gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
-  gtk_widget_show_all (window);
-}
 
 int
 startGUI(int    argc,
       char **argv)
 {
-  GtkApplication *app;
-  int status;
+    GtkBuilder      *builder;
+    GtkWidget       *window;
 
-  app = gtk_application_new ("org.gtk.example", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
-  status = g_application_run (G_APPLICATION (app), argc, argv);
-  g_object_unref (app);
+    gtk_init(&argc, &argv);
 
-  return status;
+    builder = gtk_builder_new();
+    gtk_builder_add_from_file (builder, "VMWindow.glade", NULL);
+
+    window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
+    gtk_builder_connect_signals(builder, NULL);
+
+    if(GTK_IS_BIN(window)) {
+        GtkWidget* grid = gtk_bin_get_child(GTK_BIN(window));
+        GtkWidget* grid2 = gtk_grid_get_child_at (GTK_GRID(grid), 2, 1);
+
+        GtkWidget* label = gtk_grid_get_child_at (GTK_GRID(grid2), 2, 1);
+        gtk_label_set_text (GTK_LABEL(label),
+                            "YES!");
+
+    }
+
+
+    g_object_unref(builder);
+
+    gtk_widget_show(window);
+    gtk_main();
+
+    return 0;
 }
 
