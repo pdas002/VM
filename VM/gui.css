@@ -6,18 +6,6 @@ GtkWindow {
   color: green;
 }
 
-#input {
-   background-color: blue;
-}
-
-#grid {
-   background-color: black;
-	margin-bottom: 300px;
-}
-#reg {
-   background-color: red;
-}
-
-#menu {
-   background-color: green;
+#text{
+	background-color: white;
 }

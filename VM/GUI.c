@@ -10,8 +10,13 @@
 
 
 
+void handleBuff(){
+	gtk_main_quit();
+}
 
-int
+
+
+GtkWidget*
 startGUI(int    argc,
       char **argv)
 {
@@ -26,22 +31,37 @@ startGUI(int    argc,
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
     gtk_builder_connect_signals(builder, NULL);
 
-    if(GTK_IS_BIN(window)) {
-        GtkWidget* grid = gtk_bin_get_child(GTK_BIN(window));
-        GtkWidget* grid2 = gtk_grid_get_child_at (GTK_GRID(grid), 2, 1);
-
-        GtkWidget* label = gtk_grid_get_child_at (GTK_GRID(grid2), 2, 1);
-        gtk_label_set_text (GTK_LABEL(label),
-                            "YES!");
-
-    }
+	GtkWidget* grid = gtk_bin_get_child(GTK_BIN(window));
 
 
     g_object_unref(builder);
 
     gtk_widget_show(window);
-    gtk_main();
 
-    return 0;
+    return grid;
+}
+
+
+void initRegLabels(unsigned int* regs, GtkWidget* grid ){
+	char Hex[8];
+	 for(int i = 0; i< 32; i++){
+		 GtkWidget* label = gtk_grid_get_child_at (GTK_GRID(grid), 2, i);
+		 sprintf(Hex, "0x%X", regs[i]);
+		 gtk_label_set_text (GTK_LABEL(label), Hex);
+	 }
+}
+
+void initTextMessage(GtkWidget* textview){
+	GtkTextBuffer* buff = gtk_text_view_get_buffer (GTK_TEXT_VIEW(textview));
+	gtk_text_buffer_set_text (GTK_TEXT_BUFFER(buff),
+			"Welcome to a MIPS inspired VM!\n"
+			"Constraints: For SW, LW => (val(rs) + imm) < 100 and For BEQ, address is which instr to go to starting from 0.\n"
+			"Enter Instruction Mnemonic in specific format please (Ex: ADD $1,$2,$3 or\nADD\n$1,$2,$3).\n"
+			"Press enter without typing when done.\n",
+	                          -1);
+	//	printf("Welcome to a MIPS inspired VM!\n");
+	//	printf("Constraints: For SW, LW => (val(rs) + imm) < 100 and For BEQ, address is which instr to go to starting from  0\n"
+	//			"Enter Instruction Mnemonic in specific format please (Ex: ADD $1,$2,$3 or\nADD\n$1,$2,$3).\n"
+	//			"Press enter without typing when done.\n");
 }
 

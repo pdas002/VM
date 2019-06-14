@@ -8,7 +8,10 @@
 #ifndef GUI_H_
 #define GUI_H_
 
-int startGUI(int    argc,
+GtkWidget* startGUI(int    argc,
 	      char **argv);
+
+void initRegLabels(unsigned int* regs, GtkWidget* grid );
+void initTextMessage(GtkWidget* textview);
 
 #endif /* GUI_H_ */

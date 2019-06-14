@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <gtk/gtk.h>
 #include "input.h"
 #include "registers.h"
 #include "memory.h"
@@ -18,67 +19,70 @@
 
 int main(int    argc, char **argv){
 
-	startGUI(argc, argv);
+	GtkWidget* grid = startGUI(argc, argv);
+	GtkWidget* innerRegGrid = gtk_grid_get_child_at (GTK_GRID(grid), 2, 1);
+	GtkWidget* textView = gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1)));
+	initTextMessage(textView);
+    unsigned int* registers = createRegisters();
+    initRegLabels(registers, innerRegGrid);
+
+
+
+
+	struct INSTRUCTION** instrsFront = malloc(sizeof(struct INSTRUCTION*));
+	if(instrsFront == NULL){
+			fprintf(stderr, "CAN'T ALLOC MEM\n");
+			exit(0);
+	}
+	struct INSTRUCTION** instrsBack = instrsFront;
+	struct INSTRUCTION** instrsTemp;
+	int instrCount = 0;
+	while(true){
+		struct INSTRUCTION* instr = handleInput(gtk_text_view_get_buffer (GTK_TEXT_VIEW(textView))); //Returns NULL if wrong input and instr.type = D if done with instrs
+		if(instr != NULL){
+			if(instr->type == D){
+				free(instr);
+				break;
+			}else{
+				if(instrsBack == instrsFront){
+					*instrsFront = instr;
+					instrsTemp = realloc(instrsFront, (instrCount+2) * sizeof(struct INSTRUCTION*));
+					if (instrsTemp == NULL)
+					{
+						printf("CAN'T ALLOC MEM\n");
+						free(instrsFront);
+						exit(0);
+					}
+					else
+					{
+						instrsFront = instrsTemp;
+						instrsBack = instrsFront + 1; //Point to the vacant spot after last instr
+						instrCount++;
+					}
+				} else{
+					*instrsBack = instr; // Fill vacant spot with new instr
+					int difference = instrsBack - instrsFront;
+					instrsTemp = realloc(instrsFront, (instrCount+2) * sizeof(struct INSTRUCTION*));
+					if (instrsTemp == NULL)
+					{
+						printf("CAN'T ALLOC MEM\n");
+						free(instrsFront);
+						exit(0);
+					}
+					else
+					{
+						instrsFront = instrsTemp;
+						instrsBack = (instrsFront + difference)+1; //Point to the vacant spot after last instr
+						instrCount++;
+					}
+				}
+			}
+
+
+
+		}
+	}
 //
-//	printf("Welcome to a MIPS inspired VM!\n");
-//	printf("Constraints: For SW, LW => (val(rs) + imm) < 100 and For BEQ, address is which instr to go to starting from  0\n"
-//			"Enter Instruction Mnemonic in specific format please (Ex: ADD $1,$2,$3 or\nADD\n$1,$2,$3).\n"
-//			"Press enter without typing when done.\n");
-//	struct INSTRUCTION** instrsFront = malloc(sizeof(struct INSTRUCTION*));
-//	if(instrsFront == NULL){
-//			fprintf(stderr, "CAN'T ALLOC MEM\n");
-//			exit(0);
-//	}
-//	struct INSTRUCTION** instrsBack = instrsFront;
-//	struct INSTRUCTION** instrsTemp;
-//	int instrCount = 0;
-//	while(true){
-//		struct INSTRUCTION* instr = handleInput(); //Returns NULL if wrong input and instr.type = D if done with instrs
-//		if(instr != NULL){
-//			if(instr->type == D){
-//				free(instr);
-//				break;
-//			}else{
-//				if(instrsBack == instrsFront){
-//					*instrsFront = instr;
-//					instrsTemp = realloc(instrsFront, (instrCount+2) * sizeof(struct INSTRUCTION*));
-//					if (instrsTemp == NULL)
-//					{
-//						printf("CAN'T ALLOC MEM\n");
-//						free(instrsFront);
-//						exit(0);
-//					}
-//					else
-//					{
-//						instrsFront = instrsTemp;
-//						instrsBack = instrsFront + 1; //Point to the vacant spot after last instr
-//						instrCount++;
-//					}
-//				} else{
-//					*instrsBack = instr; // Fill vacant spot with new instr
-//					int difference = instrsBack - instrsFront;
-//					instrsTemp = realloc(instrsFront, (instrCount+2) * sizeof(struct INSTRUCTION*));
-//					if (instrsTemp == NULL)
-//					{
-//						printf("CAN'T ALLOC MEM\n");
-//						free(instrsFront);
-//						exit(0);
-//					}
-//					else
-//					{
-//						instrsFront = instrsTemp;
-//						instrsBack = (instrsFront + difference)+1; //Point to the vacant spot after last instr
-//						instrCount++;
-//					}
-//				}
-//			}
-//
-//
-//
-//		}
-//	}
-//
-//    unsigned int* registers = createRegisters();
 //    unsigned int* memory = createMem();
 //
 //    struct INSTRUCTION** PC = instrsFront;
@@ -152,8 +156,8 @@ int main(int    argc, char **argv){
 //    }
 //
 //
-//	free(instrsFront);
-//	free(registers);
+	free(instrsFront);
+	free(registers);
 //	free(memory);
 	return 0;
 }

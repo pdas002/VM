@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <gtk/gtk.h>
 #include "input.h"
 
 
@@ -14,18 +15,29 @@
 #define MAX_OPCHAR 18
 
 
+char* getInput(GtkTextBuffer* buff){
 
-
-char* getInput(){
 	char* Name = malloc(sizeof(char));
 	if(Name == NULL){
 		return NULL;
 	}
 	char* tmpName;
 	char c;
-	printf("> ");
+	gtk_text_buffer_insert_at_cursor (GTK_TEXT_BUFFER(buff),
+	                                 "> ",
+	                                  2);
 		for(int i = 0; i< MAX_MNEMONIC; i++){
-			c = getchar();
+			gtk_main();
+			GtkTextIter* iter;
+			GtkTextMark* mark= gtk_text_buffer_get_mark (buff,
+			                          "insert");
+			gtk_text_buffer_get_iter_at_mark (buff,
+			                                  iter,
+			                                mark);
+			c = gtk_text_iter_get_char (iter);
+			gtk_text_buffer_insert_at_cursor (GTK_TEXT_BUFFER(buff),
+				                                 "g",
+				                                  1);
 			if(c == '\n' && i == 0){
 				tmpName = realloc(Name, 5 * sizeof(char));
 				if (tmpName == NULL)
@@ -62,7 +74,7 @@ char* getInput(){
 		return Name;
 }
 
-struct INSTRUCTION* handleInput(){
+struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 	char operation[MAX_OPCHAR];
 	struct INSTRUCTION* Instruct = malloc(sizeof(struct INSTRUCTION));
 	if(Instruct == NULL){
@@ -71,7 +83,7 @@ struct INSTRUCTION* handleInput(){
 	}
 	unsigned int rs, rt, rd, imm;
 
-	char* Name = getInput();
+	char* Name = getInput(buff);
 
 	if((strcmp(Name, "Done") == 0)){
 		Instruct->type = D; //Done with instrs type
@@ -189,8 +201,6 @@ struct INSTRUCTION* handleInput(){
 	free(Name);
 	return Instruct;
 }
-
-
 
 
 
