@@ -28,16 +28,16 @@ char* getInput(GtkTextBuffer* buff){
 	                                  2);
 		for(int i = 0; i< MAX_MNEMONIC; i++){
 			gtk_main();
-			GtkTextIter* iter;
-			GtkTextMark* mark= gtk_text_buffer_get_mark (buff,
-			                          "insert");
-			gtk_text_buffer_get_iter_at_mark (buff,
-			                                  iter,
-			                                mark);
-			c = gtk_text_iter_get_char (iter);
-			gtk_text_buffer_insert_at_cursor (GTK_TEXT_BUFFER(buff),
-				                                 "g",
-				                                  1);
+
+			GtkTextIter start;
+
+			gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER(buff),
+													&start,
+													-1);
+			gtk_text_iter_backward_char (&start);
+			c = gtk_text_iter_get_char (&start);
+
+			fprintf(stderr, "%c", c);
 			if(c == '\n' && i == 0){
 				tmpName = realloc(Name, 5 * sizeof(char));
 				if (tmpName == NULL)
@@ -74,8 +74,42 @@ char* getInput(GtkTextBuffer* buff){
 		return Name;
 }
 
+
+char* bufferStorage(GtkTextBuffer* buff, int len){
+	char c;
+	char* returnBuff = malloc(sizeof(char));;
+	char* tmpName;
+	for(int i = 0; i< len; i++){
+		gtk_main();
+		GtkTextIter start;
+
+		gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER(buff),
+												&start,
+												-1);
+		gtk_text_iter_backward_char (&start);
+		c = gtk_text_iter_get_char (&start);
+		if(c == '\n'){break;}
+
+		returnBuff[i] = c;
+		tmpName = realloc(returnBuff, (i+2) * sizeof(char));
+		if (tmpName == NULL)
+		{
+			printf("\nExiting!!");
+			free(returnBuff);
+			exit(0);
+		}
+		else
+		{
+			returnBuff= tmpName;           // the reallocation succeeded, we can overwrite our original pointer now
+			returnBuff[i+1] = '\0';
+		}
+
+	}
+	return returnBuff;
+
+}
+
 struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
-	char operation[MAX_OPCHAR];
 	struct INSTRUCTION* Instruct = malloc(sizeof(struct INSTRUCTION));
 	if(Instruct == NULL){
 			fprintf(stderr, "CAN'T ALLOC MEM\n");
@@ -84,6 +118,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 	unsigned int rs, rt, rd, imm;
 
 	char* Name = getInput(buff);
+    fprintf(stderr, "%s", Name);
 
 	if((strcmp(Name, "Done") == 0)){
 		Instruct->type = D; //Done with instrs type
@@ -94,8 +129,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		exit(0);
 	}
 	else if((strcmp(Name, "ADDI") == 0)){
-		fgets(operation, MAX_OPCHAR, stdin);
-		if(sscanf(operation, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
+		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -107,8 +141,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	} else if((strcmp(Name, "ANDI") == 0) ){
-		fgets(operation, MAX_OPCHAR, stdin);
-		if(sscanf(operation, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
+		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -120,8 +153,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "SW") == 0) ){
-		fgets(operation, MAX_OPCHAR, stdin);
-		if(sscanf(operation, "$%d, %d($%d)", &rt, &imm, &rs) != 3){
+		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d, %d($%d)", &rt, &imm, &rs) != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -133,8 +165,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "LW") == 0) ){
-		fgets(operation, MAX_OPCHAR, stdin);
-		if(sscanf(operation,"$%d, %d($%d)", &rt, &imm, &rs) != 3){
+		if(sscanf(bufferStorage(buff, MAX_OPCHAR),"$%d, %d($%d)", &rt, &imm, &rs) != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -146,8 +177,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "BEQ") == 0) ){
-		fgets(operation, MAX_OPCHAR, stdin);
-		if(sscanf(operation, "$%d,$%d,%d", &rs, &rt, &imm) != 3){
+		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,%d", &rs, &rt, &imm) != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -160,8 +190,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "ADD") == 0) || (strcmp(Name, "DIV") == 0) || (strcmp(Name, "MULT") == 0) ||
 			(strcmp(Name, "XOR") == 0) || (strcmp(Name, "OR") == 0) || (strcmp(Name, "AND") == 0)){
-				fgets(operation, MAX_OPCHAR, stdin);
-				if(sscanf(operation, "$%d,$%d,$%d\n", &rd, &rs, &rt) != 3){
+				if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,$%d\n", &rd, &rs, &rt) != 3){
 					printf("Wrong Format...\n");
 					free(Name);
 					free(Instruct);

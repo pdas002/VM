@@ -14,4 +14,5 @@ GtkWidget* startGUI(int    argc,
 void initRegLabels(unsigned int* regs, GtkWidget* grid );
 void initTextMessage(GtkWidget* textview);
 
+
 #endif /* GUI_H_ */

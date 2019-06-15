@@ -18,7 +18,6 @@
 
 
 int main(int    argc, char **argv){
-
 	GtkWidget* grid = startGUI(argc, argv);
 	GtkWidget* innerRegGrid = gtk_grid_get_child_at (GTK_GRID(grid), 2, 1);
 	GtkWidget* textView = gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1)));
@@ -82,83 +81,83 @@ int main(int    argc, char **argv){
 
 		}
 	}
-//
-//    unsigned int* memory = createMem();
-//
-//    struct INSTRUCTION** PC = instrsFront;
-//    while(PC <= instrsBack){
-//    	if((*PC)->type == R){
-//    		switch((*PC)->Instr.RTYPE.FUNCT){
-//    			case ADD:
-//    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), ADD));
-//    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
-//    				break;
-//    			case DIV:
-//    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), DIV));
-//    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
-//    				break;
-//    			case MULT:
-//    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), MULT));
-//    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
-//    				break;
-//    			case XOR:
-//    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), XOR));
-//    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
-//    				break;
-//    			case OR:
-//    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), OR));
-//    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
-//    				break;
-//    			case AND:
-//    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), AND));
-//    				printf("%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
-//    				break;
-//    			default:
-//    				break;
-//    		}
-//    		PC++;
-//    	}else{
-//    		switch((*PC)->Instr.ITYPE.OPCODE){
-//    			case ADDI:
-//    				editReg(registers, (*PC)->Instr.ITYPE.RT, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD));
-//    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
-//    				PC++;
-//    				break;
-//    			case ANDI:
-//    				editReg(registers, (*PC)->Instr.ITYPE.RT, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD));
-//    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
-//    				PC++;
-//    				break;
-//    			case LW:
-//    				editReg(registers, (*PC)->Instr.ITYPE.RT, load(memory, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD)));
-//    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
-//    				PC++;
-//    				break;
-//    			case SW:
-//    				store(memory, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD), readReg(registers,(*PC)->Instr.ITYPE.RT) );
-//    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
-//    				PC++;
-//    				break;
-//    			case BEQ:
-//    				printf("%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
-//    				if(execute(readReg(registers,(*PC)->Instr.ITYPE.RS), ~(readReg(registers,(*PC)->Instr.ITYPE.RT)) +1 , ADD ) == 0){
-//    					PC = instrsFront + (*PC)->Instr.ITYPE.IMM;
-//    					printf("%p\n", PC);
-//    				}else{
-//    					printf("f%p\n", PC);
-//    					PC++;
-//    				}
-//    				break;
-//    			default:
-//    				break;
-//    		}
-//    	}
-//    }
-//
-//
+
+    unsigned int* memory = createMem();
+
+    struct INSTRUCTION** PC = instrsFront;
+    while(PC <= instrsBack){
+    	if((*PC)->type == R){
+    		switch((*PC)->Instr.RTYPE.FUNCT){
+    			case ADD:
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), ADD));
+    				fprintf(stderr, "%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
+    				break;
+    			case DIV:
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), DIV));
+    				fprintf(stderr,"%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
+    				break;
+    			case MULT:
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), MULT));
+    				fprintf(stderr,"%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
+    				break;
+    			case XOR:
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), XOR));
+    				fprintf(stderr,"%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
+    				break;
+    			case OR:
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), OR));
+    				fprintf(stderr,"%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
+    				break;
+    			case AND:
+    				editReg(registers, (*PC)->Instr.RTYPE.RD, execute(readReg(registers,(*PC)->Instr.RTYPE.RS), readReg(registers,(*PC)->Instr.RTYPE.RT), AND));
+    				fprintf(stderr,"%d %d %d %d %d:%u\n", (*PC)->Instr.RTYPE.OPCODE, (*PC)->Instr.RTYPE.RS, (*PC)->Instr.RTYPE.RT, (*PC)->Instr.RTYPE.RD, (*PC)->Instr.RTYPE.FUNCT, registers[(*PC)->Instr.RTYPE.RD]  );
+    				break;
+    			default:
+    				break;
+    		}
+    		PC++;
+    	}else{
+    		switch((*PC)->Instr.ITYPE.OPCODE){
+    			case ADDI:
+    				editReg(registers, (*PC)->Instr.ITYPE.RT, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD));
+    				fprintf(stderr,"%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
+    				PC++;
+    				break;
+    			case ANDI:
+    				editReg(registers, (*PC)->Instr.ITYPE.RT, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD));
+    				fprintf(stderr,"%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
+    				PC++;
+    				break;
+    			case LW:
+    				editReg(registers, (*PC)->Instr.ITYPE.RT, load(memory, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD)));
+    				fprintf(stderr,"%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, registers[(*PC)->Instr.ITYPE.RT]);
+    				PC++;
+    				break;
+    			case SW:
+    				store(memory, execute(readReg(registers,(*PC)->Instr.ITYPE.RS), (*PC)->Instr.ITYPE.IMM, ADD), readReg(registers,(*PC)->Instr.ITYPE.RT) );
+    				fprintf(stderr,"%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
+    				PC++;
+    				break;
+    			case BEQ:
+    				fprintf(stderr,"%d %d %d %d:%u\n", (*PC)->Instr.ITYPE.OPCODE, (*PC)->Instr.ITYPE.RS, (*PC)->Instr.ITYPE.RT, (*PC)->Instr.ITYPE.IMM, memory[execute(registers[(*PC)->Instr.ITYPE.RS], (*PC)->Instr.ITYPE.IMM, ADD)]);
+    				if(execute(readReg(registers,(*PC)->Instr.ITYPE.RS), ~(readReg(registers,(*PC)->Instr.ITYPE.RT)) +1 , ADD ) == 0){
+    					PC = instrsFront + (*PC)->Instr.ITYPE.IMM;
+    					fprintf(stderr,"%p\n", PC);
+    				}else{
+    					fprintf(stderr,"f%p\n", PC);
+    					PC++;
+    				}
+    				break;
+    			default:
+    				break;
+    		}
+    	}
+    }
+
+
 	free(instrsFront);
 	free(registers);
-//	free(memory);
+	free(memory);
 	return 0;
 }
 

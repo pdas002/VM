@@ -10,10 +10,23 @@
 
 
 
-void handleBuff(){
-	gtk_main_quit();
+void handleBuff(GtkTextBuffer *textbuffer,
+        gpointer       user_data){
+	if(gtk_main_level () != 0){
+		fprintf(stderr, "Yes");
+		gtk_main_quit();
+	}
+
+
 }
 
+void backSpace(GtkTextView *text_view,
+        gpointer       user_data){
+	if(gtk_main_level () != 0){
+		fprintf(stderr, "BackSpaced");
+		gtk_main_quit();
+	}
+}
 
 
 GtkWidget*
@@ -29,11 +42,9 @@ startGUI(int    argc,
     gtk_builder_add_from_file (builder, "VMWindow.glade", NULL);
 
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
-    gtk_builder_connect_signals(builder, NULL);
-
 	GtkWidget* grid = gtk_bin_get_child(GTK_BIN(window));
-
-
+    g_signal_connect (G_OBJECT (gtk_text_view_get_buffer (GTK_TEXT_VIEW(gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1)))))), "notify::text", G_CALLBACK (handleBuff), NULL);
+    g_signal_connect (G_OBJECT (GTK_TEXT_VIEW(gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1))))), "backspace", G_CALLBACK (gtk_true), NULL);
     g_object_unref(builder);
 
     gtk_widget_show(window);
