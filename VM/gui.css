@@ -1,11 +1,15 @@
-GtkWindow {
-    font: Comic Sans 20
+@binding-set stopBackspace
+{
+  unbind "BackSpace";
 }
 
-.button {
-  color: green;
+
+#textview2
+{
+  gtk-key-bindings: stopBackspace;
 }
 
-#text{
-	background-color: white;
+
+grid *{
+	font: 20px Sans;
 }

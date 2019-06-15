@@ -27,17 +27,13 @@ char* getInput(GtkTextBuffer* buff){
 	                                 "> ",
 	                                  2);
 		for(int i = 0; i< MAX_MNEMONIC; i++){
+
 			gtk_main();
-
 			GtkTextIter start;
-
-			gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER(buff),
-													&start,
-													-1);
+			gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER(buff), &start, -1);
 			gtk_text_iter_backward_char (&start);
 			c = gtk_text_iter_get_char (&start);
 
-			fprintf(stderr, "%c", c);
 			if(c == '\n' && i == 0){
 				tmpName = realloc(Name, 5 * sizeof(char));
 				if (tmpName == NULL)

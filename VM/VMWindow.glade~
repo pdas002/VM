@@ -32,7 +32,7 @@
                 <property name="can_focus">True</property>
                 <property name="wrap_mode">char</property>
                 <property name="indent">5</property>
-                <signal name="insert-at-cursor" handler="handleBuff()" swapped="no"/>
+                <signal name="backspace" handler="backSpace" swapped="yes"/>
               </object>
             </child>
           </object>

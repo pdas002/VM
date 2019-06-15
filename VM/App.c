@@ -83,9 +83,14 @@ int main(int    argc, char **argv){
 	}
 
     unsigned int* memory = createMem();
-
+    char regText[10];
     struct INSTRUCTION** PC = instrsFront;
-    while(PC <= instrsBack){
+
+    sprintf(regText, "%p", PC);
+    gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, 32)), regText);
+
+    while(PC < instrsBack){
+    	gtk_main();
     	if((*PC)->type == R){
     		switch((*PC)->Instr.RTYPE.FUNCT){
     			case ADD:
@@ -115,7 +120,14 @@ int main(int    argc, char **argv){
     			default:
     				break;
     		}
+
+    		sprintf(regText, "0x%X", readReg(registers,(*PC)->Instr.RTYPE.RD));
+    		gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, (*PC)->Instr.RTYPE.RD)), regText);
+
     		PC++;
+
+    		sprintf(regText, "%p", PC);
+    		gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, 32)), regText);
     	}else{
     		switch((*PC)->Instr.ITYPE.OPCODE){
     			case ADDI:
@@ -151,10 +163,16 @@ int main(int    argc, char **argv){
     			default:
     				break;
     		}
+
+    		sprintf(regText, "0x%X", readReg(registers,(*(PC-1))->Instr.ITYPE.RT));
+    		gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, (*(PC-1))->Instr.ITYPE.RT)), regText);
+
+    		sprintf(regText, "%p", PC);
+    		gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, 32)), regText);
     	}
     }
 
-
+    gtk_main();
 	free(instrsFront);
 	free(registers);
 	free(memory);

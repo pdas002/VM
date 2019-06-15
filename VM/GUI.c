@@ -7,6 +7,7 @@
 
 
 #include <gtk/gtk.h>
+#include  <gdk/gdkkeysyms.h>
 
 
 
@@ -20,15 +21,6 @@ void handleBuff(GtkTextBuffer *textbuffer,
 
 }
 
-void backSpace(GtkTextView *text_view,
-        gpointer       user_data){
-	if(gtk_main_level () != 0){
-		fprintf(stderr, "BackSpaced");
-		gtk_main_quit();
-	}
-}
-
-
 GtkWidget*
 startGUI(int    argc,
       char **argv)
@@ -41,12 +33,17 @@ startGUI(int    argc,
     builder = gtk_builder_new();
     gtk_builder_add_from_file (builder, "VMWindow.glade", NULL);
 
+
+    GtkCssProvider *cssProvider = gtk_css_provider_new();
+    gtk_css_provider_load_from_path(cssProvider, "gui.css", NULL);
+    gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
+							   GTK_STYLE_PROVIDER(cssProvider),
+							   GTK_STYLE_PROVIDER_PRIORITY_USER);
+
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window1"));
 	GtkWidget* grid = gtk_bin_get_child(GTK_BIN(window));
     g_signal_connect (G_OBJECT (gtk_text_view_get_buffer (GTK_TEXT_VIEW(gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1)))))), "notify::text", G_CALLBACK (handleBuff), NULL);
-    g_signal_connect (G_OBJECT (GTK_TEXT_VIEW(gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1))))), "backspace", G_CALLBACK (gtk_true), NULL);
     g_object_unref(builder);
-
     gtk_widget_show(window);
 
     return grid;
@@ -54,11 +51,16 @@ startGUI(int    argc,
 
 
 void initRegLabels(unsigned int* regs, GtkWidget* grid ){
-	char Hex[8];
-	 for(int i = 0; i< 32; i++){
-		 GtkWidget* label = gtk_grid_get_child_at (GTK_GRID(grid), 2, i);
-		 sprintf(Hex, "0x%X", regs[i]);
-		 gtk_label_set_text (GTK_LABEL(label), Hex);
+	char Hex[10];
+	 for(int i = 0; i< 33; i++){
+		 if(i == 32){
+			 GtkWidget* label = gtk_grid_get_child_at (GTK_GRID(grid), 2, i);
+			 gtk_label_set_text (GTK_LABEL(label), "0x0");
+		 }else{
+			 GtkWidget* label = gtk_grid_get_child_at (GTK_GRID(grid), 2, i);
+			 sprintf(Hex, "0x%X", regs[i]);
+			 gtk_label_set_text (GTK_LABEL(label), Hex);
+		 }
 	 }
 }
 
