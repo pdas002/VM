@@ -19,8 +19,9 @@
 
 int main(int    argc, char **argv){
 	GtkWidget* grid = startGUI(argc, argv);
-	GtkWidget* innerRegGrid = gtk_grid_get_child_at (GTK_GRID(grid), 2, 1);
-	GtkWidget* textView = gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 1)));
+	GtkWidget* innerRegGrid = gtk_grid_get_child_at (GTK_GRID(grid), 6, 1);
+	GtkWidget* textView = gtk_bin_get_child(GTK_BIN(gtk_grid_get_child_at (GTK_GRID(grid), 0, 2)));
+	GtkWidget* menu = gtk_grid_get_child_at (GTK_GRID(grid), 0, 0);
 	initTextMessage(textView);
     unsigned int* registers = createRegisters();
     initRegLabels(registers, innerRegGrid);
@@ -76,11 +77,15 @@ int main(int    argc, char **argv){
 					}
 				}
 			}
-
-
-
 		}
+		free(instr);
 	}
+
+
+	gtk_widget_set_visible (gtk_grid_get_child_at (GTK_GRID(grid), 0, 1), TRUE);
+	gtk_widget_set_visible (gtk_grid_get_child_at (GTK_GRID(grid), 1, 1), TRUE);
+	gtk_text_view_set_editable (GTK_TEXT_VIEW(textView), FALSE);
+	gtk_main();
 
     unsigned int* memory = createMem();
     char regText[10];
@@ -90,7 +95,6 @@ int main(int    argc, char **argv){
     gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, 32)), regText);
 
     while(PC < instrsBack){
-    	gtk_main();
     	if((*PC)->type == R){
     		switch((*PC)->Instr.RTYPE.FUNCT){
     			case ADD:
@@ -170,12 +174,18 @@ int main(int    argc, char **argv){
     		sprintf(regText, "%p", PC);
     		gtk_label_set_text (GTK_LABEL(gtk_grid_get_child_at (GTK_GRID(innerRegGrid), 2, 32)), regText);
     	}
+    	if(gtk_widget_is_visible (gtk_grid_get_child_at (GTK_GRID(grid), 1, 1))){
+    		gtk_main();
+    	}
     }
 
-    gtk_main();
+
 	free(instrsFront);
 	free(registers);
 	free(memory);
+	gtk_widget_set_visible (gtk_grid_get_child_at (GTK_GRID(grid), 0, 1), FALSE);
+	gtk_widget_set_visible (gtk_grid_get_child_at (GTK_GRID(grid), 1, 1), FALSE);
+
 	return 0;
 }
 

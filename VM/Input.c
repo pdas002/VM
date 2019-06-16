@@ -96,7 +96,7 @@ char* bufferStorage(GtkTextBuffer* buff, int len){
 		}
 		else
 		{
-			returnBuff= tmpName;           // the reallocation succeeded, we can overwrite our original pointer now
+			returnBuff = tmpName;           // the reallocation succeeded, we can overwrite our original pointer now
 			returnBuff[i+1] = '\0';
 		}
 
@@ -115,7 +115,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 
 	char* Name = getInput(buff);
     fprintf(stderr, "%s", Name);
-
+    char* operat = bufferStorage(buff, MAX_OPCHAR);
 	if((strcmp(Name, "Done") == 0)){
 		Instruct->type = D; //Done with instrs type
 		free(Name);
@@ -125,7 +125,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		exit(0);
 	}
 	else if((strcmp(Name, "ADDI") == 0)){
-		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
+		if(sscanf(operat, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -137,7 +137,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	} else if((strcmp(Name, "ANDI") == 0) ){
-		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
+		if(sscanf(operat, "$%d,$%d,%d", &rt, &rs, &imm)  != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -149,7 +149,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "SW") == 0) ){
-		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d, %d($%d)", &rt, &imm, &rs) != 3){
+		if(sscanf(operat, "$%d, %d($%d)", &rt, &imm, &rs) != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -161,7 +161,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "LW") == 0) ){
-		if(sscanf(bufferStorage(buff, MAX_OPCHAR),"$%d, %d($%d)", &rt, &imm, &rs) != 3){
+		if(sscanf(operat,"$%d, %d($%d)", &rt, &imm, &rs) != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -173,7 +173,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).Instr.ITYPE.RT = rt;
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "BEQ") == 0) ){
-		if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,%d", &rs, &rt, &imm) != 3){
+		if(sscanf(operat, "$%d,$%d,%d", &rs, &rt, &imm) != 3){
 			printf("Wrong Format...\n");
 			free(Name);
 			free(Instruct);
@@ -186,7 +186,7 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		(*Instruct).type = I;
 	}else if((strcmp(Name, "ADD") == 0) || (strcmp(Name, "DIV") == 0) || (strcmp(Name, "MULT") == 0) ||
 			(strcmp(Name, "XOR") == 0) || (strcmp(Name, "OR") == 0) || (strcmp(Name, "AND") == 0)){
-				if(sscanf(bufferStorage(buff, MAX_OPCHAR), "$%d,$%d,$%d\n", &rd, &rs, &rt) != 3){
+				if(sscanf(operat, "$%d,$%d,$%d\n", &rd, &rs, &rt) != 3){
 					printf("Wrong Format...\n");
 					free(Name);
 					free(Instruct);
@@ -221,9 +221,11 @@ struct INSTRUCTION* handleInput(GtkTextBuffer* buff){
 		printf("Instruction Not Currently Supported. Enter another!\n");
 		free(Name);
 		free(Instruct);
+		free(operat);
 		return NULL;
 	}
 	free(Name);
+	free(operat);
 	return Instruct;
 }
 
