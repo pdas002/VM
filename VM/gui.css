@@ -10,6 +10,12 @@
 }
 
 
-grid *{
-	font: 20px Sans;
+#textview2{
+	font-size: 12px;
+}
+
+#scrll{
+		border-width: 7px;
+		border-color: blue;
+		border-style: groove;
 }
