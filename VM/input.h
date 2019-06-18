@@ -1,16 +1,17 @@
 /*
- * input.h
+ * Header file for input.c
  *
- *  Created on: Jun 4, 2019
- *      Author: incinv
+ *  Author: Prangon Das (pcd3897@g.rit.edu)
  */
 
 #ifndef INPUT_H_
 #define INPUT_H_
+
 #define R 0
 #define I 1
 #define D 2
 
+/**ENUMS**/
 typedef enum{
 	RTYPE = 0x00,
 	ADDI = 0x08,
@@ -29,6 +30,7 @@ typedef enum{
 	AND = 0x24
 } FUNCTION;
 
+/**STRUCTS/UNION**/
 struct RTYPE {
 	unsigned int OPCODE: 6;
 	unsigned int RS: 5;
@@ -56,6 +58,10 @@ struct INSTRUCTION{
 	int type;
 };
 
-struct INSTRUCTION* handleInput();
+/*
+ * Function to get input and parse it to create instructions.
+ * Params: buff - the text view buffer
+ */
+struct INSTRUCTION* handleInput(GtkTextBuffer* buff);
 
 #endif /* INPUT_H_ */

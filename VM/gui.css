@@ -1,3 +1,7 @@
+/* The css file for the GUI. This file is necessary since it disables backspacing. 
+*	Author: Prangon Das (pcd3897@g.rit.edu)
+*/
+
 @binding-set stopBackspace
 {
   unbind "BackSpace";
